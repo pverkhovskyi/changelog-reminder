@@ -1,7 +1,7 @@
 # ChangelogReminder
 
 > A GitHub bot that reminds to update CHANGELOG.md.
-
+![alt text](./docs/changelog-reminder.png "Logo Title Text 1")
 ## Usage
 
 1. Install the bot on the intended repositories. The app has **no access to your code**. It requires following permissions:
