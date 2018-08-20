@@ -1,0 +1,22 @@
+{
+  "event": "pull_request",
+  "payload": {
+    "action": "opened",
+    "pull_request": {
+      "number": 13,
+      "user": {
+        "login": "pverkhovskyi"
+      },
+      "title": "This is a test pr"
+    },
+    "repository": {
+      "name": "testing-github-apps",
+      "owner": {
+        "login": "pverkhovskyi"
+      }
+    },
+    "installation": {
+      "id": 100
+    }
+  }
+}
