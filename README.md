@@ -4,7 +4,9 @@
 
 ## Usage
 
-1. Install the bot on the intended repositories. The app has **no access to your code** it just requires read and write access to pull requests.
+1. Install the bot on the intended repositories. The app has **no access to your code**. It requires following permissions:
+  - **Read** access to metadata and single file `.github/config.yml`
+  - **Read** and **write** access to pull requests
 2. Add a `.github/config.yml` file that contains the contents you would like to reply within an `changelogReminderMessage`.
 
 ```yml
