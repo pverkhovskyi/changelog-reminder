@@ -14,7 +14,7 @@ module.exports = app => {
         // reads configuration file
         const config = await context.config('config.yml')
         // gets message for the comment
-        const template = config.changelogReminderMessage || DEFAULT_COMMENT_MESSAGE
+        const template = config && config.changelogReminderMessage || DEFAULT_COMMENT_MESSAGE
         // creates comment with message from the config
         const comment = context.issue({body: template})
         // post comment to GitHub
