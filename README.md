@@ -26,6 +26,6 @@ For more, check out the [Contributing Guide](CONTRIBUTING.md).
 
 ## License
 
-[ISC](LICENSE) © 2018 pverkhovskyi <pverkhovskyi@gmail.com>
+[ISC](LICENSE) © 2018 pverkhovskyi
 
 Built with [probot](https://github.com/probot/probot)
