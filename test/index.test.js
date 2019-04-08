@@ -12,6 +12,7 @@ test('that we can run tests', () => {
 describe('Changelog reminder', () => {
   let app
   let github
+  let config
 
   beforeEach(() => {
     app = new Probot()
@@ -20,9 +21,9 @@ describe('Changelog reminder', () => {
     // This is an easy way to mock out the GitHub API
     github = {
       repos: {
-        getContent: jest.fn().mockReturnValue(Promise.resolve({
+        getContent: jest.fn().mockImplementation(params => Promise.resolve({
           data: {
-            content: []
+            content: params.path === '.github/config.yml' ? Buffer.from(JSON.stringify(config)).toString('base64') : []
           }
         }))
       },
@@ -38,6 +39,9 @@ describe('Changelog reminder', () => {
         }))
       }
     }
+
+    config = []
+
     // Passes the mocked out GitHub API into out app instance
     app.auth = () => Promise.resolve(github)
   })
@@ -61,19 +65,103 @@ describe('Changelog reminder', () => {
 
       expect(github.issues.createComment).toHaveBeenCalled()
     })
-  })
 
-  describe('CHANGELOG.md is updated', () => {
-    beforeEach(() => {
+    test('bot posts a comment because the user did NOT update the non-default CHANGELOG.md', async () => {
       github.pullRequests.getFiles = jest.fn().mockReturnValue(Promise.resolve({
         data: [
           {filename: 'index.js'},
           {filename: 'CHANGELOG.md'}
         ]
       }))
+      config = {
+        changelogFilename: 'CHANGELOG-FOO.md'
+      }
+
+      // Simulates delivery of an pull_request.opened webhook
+      await app.receive(prOpenPayload)
+
+      expect(github.pullRequests.getFiles).toHaveBeenCalledWith({
+        owner: 'pverkhovskyi',
+        repo: 'testing-github-apps',
+        number: 13
+      })
+
+      expect(github.pullRequests.getFiles).toHaveBeenCalledWith({
+        owner: 'pverkhovskyi',
+        repo: 'testing-github-apps',
+        number: 13
+      })
+
+      expect(github.issues.createComment).toHaveBeenCalled()
     })
 
+    test('bot posts a non-default comment because the user did NOT update the CHANGELOG.md', async () => {
+      config = {
+        changelogReminderMessage: 'Foo'
+      }
+
+      // Simulates delivery of an pull_request.opened webhook
+      await app.receive(prOpenPayload)
+
+      expect(github.pullRequests.getFiles).toHaveBeenCalledWith({
+        owner: 'pverkhovskyi',
+        repo: 'testing-github-apps',
+        number: 13
+      })
+
+      expect(github.pullRequests.getFiles).toHaveBeenCalledWith({
+        owner: 'pverkhovskyi',
+        repo: 'testing-github-apps',
+        number: 13
+      })
+
+      expect(github.issues.createComment).toHaveBeenCalledWith({
+        body: 'Foo',
+        number: 13,
+        owner: 'pverkhovskyi',
+        repo: 'testing-github-apps'
+      })
+    })
+  })
+
+  describe('CHANGELOG.md is updated', () => {
     test('bot does NOT posts a comment because the user DID update the CHANGELOG.md', async () => {
+      github.pullRequests.getFiles = jest.fn().mockReturnValue(Promise.resolve({
+        data: [
+          {filename: 'index.js'},
+          {filename: 'CHANGELOG.md'}
+        ]
+      }))
+
+      // Simulates delivery of an pull_request.opened webhook
+      await app.receive(prOpenPayload)
+
+      expect(github.pullRequests.getFiles).toHaveBeenCalledWith({
+        owner: 'pverkhovskyi',
+        repo: 'testing-github-apps',
+        number: 13
+      })
+
+      expect(github.pullRequests.getFiles).toHaveBeenCalledWith({
+        owner: 'pverkhovskyi',
+        repo: 'testing-github-apps',
+        number: 13
+      })
+
+      expect(github.issues.createComment).toHaveBeenCalledTimes(0)
+    })
+
+    test('bot does NOT posts a comment because the user DID update the non-default CHANGELOG.md', async () => {
+      github.pullRequests.getFiles = jest.fn().mockReturnValue(Promise.resolve({
+        data: [
+          {filename: 'index.js'},
+          {filename: 'CHANGELOG-FOO.md'}
+        ]
+      }))
+      config = {
+        changelogFilename: 'CHANGELOG-FOO.md'
+      }
+
       // Simulates delivery of an pull_request.opened webhook
       await app.receive(prOpenPayload)
 

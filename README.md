@@ -9,9 +9,11 @@
 1. Install the app on the intended repositories. The app has **no access to your code**. It requires following permissions:
   - **Read** access to metadata and single file `.github/config.yml`
   - **Read** and **write** access to pull requests
-2. Add a `.github/config.yml` file that contains the contents you would like to reply within an `changelogReminderMessage`.
+2. Add a `.github/config.yml` file that contains the contents you would like to reply within an `changelogReminderMessage`. You can also configure the name of your changelog file by specifying the  `changelogFilename`.
 
 ```yml
+# Changelog filename
+changelogFilename: CHANGELOG.md
 # Message to be posted when PRs don't update changelog
 changelogReminderMessage: >
     Thanks for opening this pull request! All notable changes to this project should be documented in CHANGELOG.md. Please update it based on your changes.
